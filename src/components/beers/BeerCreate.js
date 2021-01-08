@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import Select from "react-select";
 import { Field, reduxForm } from "redux-form";
 import { createBeer, fetchStyles } from "../../actions";
 
@@ -8,13 +9,8 @@ class BeerCreate extends Component {
     this.props.fetchStyles();
   }
 
-  renderStyles() {
-    return this.props.styles.map((style) => {
-      return <option value="{style.id}">{style.name}</option>;
-    });
-  }
-
   onSubmit = (formValues) => {
+    console.log(formValues);
     this.props.createBeer(formValues);
   };
 
@@ -36,7 +32,13 @@ class BeerCreate extends Component {
     );
   };
 
-  renderSelect = ({ input, label }) => {
+  renderOptions = () => {
+    return this.props.styles.map((style) => {
+      return <option value={style.id}>{style.name}</option>;
+    });
+  };
+
+  renderSelect = ({ input, label, options }) => {
     return (
       <div className="border focus-within:border-blue-500 focus-within:text-blue-500 transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
@@ -44,7 +46,7 @@ class BeerCreate extends Component {
             <label className="bg-white text-gray-600 px-1">{label}</label>
           </p>
         </div>
-        <p>{this.renderStyles()}</p>
+        <select {...input}>{this.renderOptions()}</select>
       </div>
     );
   };
@@ -63,14 +65,14 @@ class BeerCreate extends Component {
               />
               <Field
                 name="rating"
-                type="range"
                 component={this.renderInput}
                 label="Beer Rating"
               />
               <Field
-                name="style"
+                name="style_id"
                 component={this.renderSelect}
                 label="Beer Style"
+                options={this.props.styles}
               />
             </div>
             <div className="border-t mt-6 pt-3">
@@ -86,6 +88,7 @@ class BeerCreate extends Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state);
   return {
     styles: Object.values(state.styles),
   };
@@ -93,6 +96,7 @@ const mapStateToProps = (state) => {
 
 const formWrapped = reduxForm({
   form: "beerCreate",
+  enableReinitialize: true,
 })(BeerCreate);
 export default connect(mapStateToProps, { fetchStyles, createBeer })(
   formWrapped

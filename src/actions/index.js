@@ -8,11 +8,10 @@ export const fetchBeers = () => async (dispatch) => {
 
 export const fetchStyles = () => async (dispatch) => {
   const response = await beers.get("styles");
-  console.log(response);
   dispatch({ type: FETCH_STYLES, payload: response.data });
 };
 
 export const createBeer = (formValues) => async (dispatch) => {
-  const response = await beers.post("beers", { ...formValues });
+  const response = await beers.post("beers", { beer: { ...formValues } });
   dispatch({ type: CREATE_BEER, payload: response.data });
 };
