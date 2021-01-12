@@ -10,11 +10,16 @@ class BeerCreate extends Component {
   }
 
   onSubmit = (formValues) => {
-    console.log(formValues);
     this.props.createBeer(formValues);
   };
 
-  renderInput = ({ input, label }) => {
+  renderError({ error, touched }) {
+    if (touched && error) {
+      return <div className="text-red-900">{error}</div>;
+    }
+  }
+
+  renderInput = ({ input, label, type, meta }) => {
     return (
       <div className="border focus-within:border-blue-500 focus-within:text-blue-500 transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
@@ -25,8 +30,12 @@ class BeerCreate extends Component {
         <p>
           <input
             {...input}
+            min="0"
+            max="5"
+            type={type}
             className="py-1 px-1 text-gray-900 outline-none block h-full w-full"
           />
+          {this.renderError(meta)}
         </p>
       </div>
     );
@@ -38,7 +47,7 @@ class BeerCreate extends Component {
     });
   };
 
-  renderSelect = ({ input, label, options }) => {
+  renderSelect = ({ input, label, meta }) => {
     return (
       <div className="border focus-within:border-blue-500 focus-within:text-blue-500 transition-all duration-500 relative rounded p-1">
         <div className="-mt-4 absolute tracking-wider px-1 uppercase text-xs">
@@ -46,7 +55,14 @@ class BeerCreate extends Component {
             <label className="bg-white text-gray-600 px-1">{label}</label>
           </p>
         </div>
-        <select {...input}>{this.renderOptions()}</select>
+        <select
+          {...input}
+          class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value=""></option>
+          {this.renderOptions()}
+        </select>
+        {this.renderError(meta)}
       </div>
     );
   };
@@ -65,6 +81,7 @@ class BeerCreate extends Component {
               />
               <Field
                 name="rating"
+                type="range"
                 component={this.renderInput}
                 label="Beer Rating"
               />
@@ -94,9 +111,32 @@ const mapStateToProps = (state) => {
   };
 };
 
+const validate = (formValues) => {
+  const errors = {};
+
+  if (!formValues.name) {
+    errors.name = "You must enter a name";
+  }
+
+  if (!formValues.rating) {
+    errors.rating = "You must enter a rating";
+  } else {
+    if (formValues.rating < 0 || formValues.rating > 5) {
+      errors.rating = "Value must be between 0 and 5";
+    }
+  }
+
+  if (!formValues.style_id) {
+    errors.style_id = "You must select a Style";
+  }
+
+  return errors;
+};
+
 const formWrapped = reduxForm({
   form: "beerCreate",
   enableReinitialize: true,
+  validate,
 })(BeerCreate);
 export default connect(mapStateToProps, { fetchStyles, createBeer })(
   formWrapped

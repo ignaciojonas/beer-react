@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchBeers } from "../../actions";
+import { fetchBeers, deleteBeer } from "../../actions";
+import Stars from "../Stars";
 
 class BeerList extends Component {
   componentDidMount() {
@@ -28,10 +29,50 @@ class BeerList extends Component {
             </div>
           </td>
           <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-sm text-gray-900">{beer.style_id}</div>
-            <div className="text-sm text-gray-500">Description TBC</div>
+            <div className="text-sm text-gray-900">{beer.style.name}</div>
+            <div className="text-sm text-gray-500">
+              {beer.style.description}
+            </div>
           </td>
-          <td className="px-6 py-4 whitespace-nowrap">{beer.rating}</td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <Stars rating={beer.rating}></Stars>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="inline-block">
+              <button onClick={() => this.props.deleteBeer(beer.id)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  width="20px"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="inline-block">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                width="20px"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                />
+              </svg>
+            </div>
+          </td>
         </tr>
       );
     });
@@ -63,6 +104,12 @@ class BeerList extends Component {
                     >
                       Rating
                     </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -82,4 +129,4 @@ const mapStateToProps = (state) => {
     beers: Object.values(state.beers),
   };
 };
-export default connect(mapStateToProps, { fetchBeers })(BeerList);
+export default connect(mapStateToProps, { fetchBeers, deleteBeer })(BeerList);

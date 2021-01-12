@@ -1,5 +1,5 @@
 import beers from "../apis/beers";
-import { FETCH_BEERS, FETCH_STYLES, CREATE_BEER } from "./types";
+import { FETCH_BEERS, FETCH_STYLES, CREATE_BEER, DELETE_BEER } from "./types";
 
 export const fetchBeers = () => async (dispatch) => {
   const response = await beers.get("beers");
@@ -14,4 +14,9 @@ export const fetchStyles = () => async (dispatch) => {
 export const createBeer = (formValues) => async (dispatch) => {
   const response = await beers.post("beers", { beer: { ...formValues } });
   dispatch({ type: CREATE_BEER, payload: response.data });
+};
+
+export const deleteBeer = (id) => async (dispatch) => {
+  const response = await beers.delete(`beers/${id}`);
+  dispatch({ type: DELETE_BEER, payload: response.data });
 };
